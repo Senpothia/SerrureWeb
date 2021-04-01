@@ -8,19 +8,20 @@ import com.pi4j.io.gpio.PinPullResistance;
 import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.RaspiPin;
 import java.util.Observable;
+import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.midi.Sequence;
+import serrureweb.SerrureWeb;
 
 public class Controleur extends Observable {
-
-    private boolean marche = false;
-    private boolean pause = false;
-    public boolean[] echantillons = {false, false, false};
+    
     public Resultat resultat = new Resultat();
     public long[] totaux = {0, 0, 0};
     public boolean[] erreurs = {false, false, false};
+    public boolean[] pauses = {false, false, false};
     public boolean[] actifs = {false, false, false};
+    public boolean[] interrompus = {false, false, false};
 
     // GPIO  -- Version Raspberry
     final GpioController gpio = GpioFactory.getInstance();
@@ -54,9 +55,9 @@ public class Controleur extends Observable {
         boolean echValide = actifs[0] || actifs[1] || actifs[2];
         resultat.setErreurs(erreurs);
 
-        while (marche && echValide) {
+        while (SerrureWeb.marche && echValide) {
 
-            if (!pause) {
+            if (!SerrureWeb.pause) {
 
                 System.out.println("***** Nouvelle sequence  *****");
                 for (int i = 0; i < 3; i++) {
@@ -104,7 +105,7 @@ public class Controleur extends Observable {
 
             } else {
 
-                while (pause) {
+                while (SerrureWeb.pause) {
                 }
 
             }
@@ -122,10 +123,6 @@ public class Controleur extends Observable {
 
     }
 
-    public boolean[] getEchantillons() {
-        return echantillons;
-    }
-
     public boolean[] getErreurs() {
         return erreurs;
     }
@@ -136,10 +133,6 @@ public class Controleur extends Observable {
 
     public long[] getTotaux() {
         return totaux;
-    }
-
-    public void setEchantillons(boolean[] echantillons) {
-        this.echantillons = echantillons;
     }
 
     public void setErreurs(boolean[] erreurs) {
@@ -161,21 +154,7 @@ public class Controleur extends Observable {
         this.totaux = totaux;
     }
 
-    public boolean isMarche() {
-        return marche;
-    }
-
-    public void setMarche(boolean marche) {
-        this.marche = marche;
-    }
-
-    public boolean isPause() {
-        return pause;
-    }
-
-    public void setPause(boolean pause) {
-        this.pause = pause;
-    }
+  
 
     public Resultat getResultat() {
         return resultat;
@@ -189,14 +168,19 @@ public class Controleur extends Observable {
         this.resultat = resultat;
     }
 
-    public void notifierResultat() {
+    public void notifierResultat() {   // notification au ModemWriter
 
         resultat.setErreurs(erreurs);
         resultat.setTotaux(totaux);
+        resultat.setActifs(actifs);
+        resultat.setPauses(pauses);
+        resultat.setInterrompus(interrompus);
         resultat.setFin(!actifs[0] && !actifs[1] && !actifs[2]);
         this.setChanged();
         this.notifyObservers(this.getResultat());
 
     }
+
+   
 
 }

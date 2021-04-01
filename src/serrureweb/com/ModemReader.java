@@ -6,7 +6,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.time.Clock;
+import java.util.Observable;
+import java.util.Observer;
 import serrureweb.Constants.Constants;
+import serrureweb.SerrureWeb;
 
 public class ModemReader implements Runnable {
 
@@ -19,8 +22,6 @@ public class ModemReader implements Runnable {
 
     public ModemReader(Socket socket) {
 
-        //this.server = server;
-        //this.port = port;
         this.socket = socket;
 
     }
@@ -47,12 +48,22 @@ public class ModemReader implements Runnable {
                 String commande = br.readLine();
                 System.out.println("serrureweb.com.ModemReader.run()");
                 System.out.println("Commande reçue: " + commande);
+               
+                notifierOrdre(commande);
+
                 System.out.println("Fin");
             }
 
         } catch (IOException ex) {
 
         }
+
+    }
+
+    private void notifierOrdre(String commande) {
+
+        SerrureWeb.commande = commande;
+        SerrureWeb.changed = true;
 
     }
 
