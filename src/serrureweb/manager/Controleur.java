@@ -15,15 +15,16 @@ import javax.sound.midi.Sequence;
 import serrureweb.SerrureWeb;
 
 public class Controleur extends Observable {
-    
+
     public Resultat resultat = new Resultat();
-    public long[] totaux = {0, 0, 0};
-    public boolean[] erreurs = {false, false, false};
-    public boolean[] pauses = {false, false, false};
-    public boolean[] actifs = {false, false, false};
-    public boolean[] interrompus = {false, false, false};
+
+    Contexte contexte = new Contexte();
+    private OrderProcessor orderProcessor = new OrderProcessor();
+    
+    private Boolean actif = false;
 
     // GPIO  -- Version Raspberry
+    /*
     final GpioController gpio = GpioFactory.getInstance();
     final GpioPinDigitalOutput relais1 = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_25, "REL1", PinState.LOW);
     final GpioPinDigitalOutput relais2 = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_28, "REL2", PinState.LOW);
@@ -36,7 +37,7 @@ public class Controleur extends Observable {
     final GpioPinDigitalInput contact1 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_05, PinPullResistance.PULL_UP);
     final GpioPinDigitalInput contact2 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_06, PinPullResistance.PULL_UP);
     final GpioPinDigitalInput contact3 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_07, PinPullResistance.PULL_UP);
-
+    */
     private boolean stateSensor1;
     private boolean stateSensor2;
     private boolean stateSensor3;
@@ -45,116 +46,109 @@ public class Controleur extends Observable {
     private boolean stateContact2;
     private boolean stateContact3;
 
+    // pour test
+    /*
     private GpioPinDigitalOutput[] relais = {relais1, relais2, relais3};
     private GpioPinDigitalInput[] sensors = {sensor1, sensor2, sensor3};
     private GpioPinDigitalInput[] contacts = {contact1, contact2, contact3};
-
+    */
     public void start() {
 
-        System.out.println("***** Lancement thread  *****");
-        boolean echValide = actifs[0] || actifs[1] || actifs[2];
-        resultat.setErreurs(erreurs);
+        System.out.println("***** démarrage séquence de test du contrôleur  *****");
+        boolean echValide = this.contexte.getActifs()[0] || this.contexte.getActifs()[1] || this.contexte.getActifs()[2];
+        resultat.setErreurs(this.contexte.getErreurs());
 
-        while (SerrureWeb.marche && echValide) {
+        while (SerrureWeb.contexte.getActif()) {
 
-            if (!SerrureWeb.pause) {
+            if (SerrureWeb.contexte.getChanged()) {
 
-                System.out.println("***** Nouvelle sequence  *****");
-                for (int i = 0; i < 3; i++) {
+                orderProcessor.analyser(SerrureWeb.contexte.getCommande());
 
-                    if (this.actifs[i]) {
+            }
 
-                        // activer relais
-                        System.out.println("Activation relais: " + i);
-                        relais[i].high();
-                        // delai anti-rebond
-                        try {
-                            Thread.sleep(300);
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
+            while (SerrureWeb.contexte.getMarche() && echValide) {
+
+                if (!SerrureWeb.contexte.getPause()) {
+
+                    System.out.println("***** Nouvelle sequence  *****");
+                    for (int i = 0; i < 3; i++) {
+
+                        if (this.contexte.getActifs()[i]) {
+
+                            // activer relais
+                            System.out.println("Activation relais: " + i);
+                           // relais[i].high();
+                            // delai anti-rebond
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException ex) {
+                                Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+
+                            // désactiver relais
+                           // relais[i].low();
+                            // lecture sensor
+                            System.out.println("Lecture sensor: " + i);
+                           // boolean sensor = sensors[i].isHigh();
+                           
+                            // lecture contact
+                            System.out.println("Lecture contact: " + i);
+                           // boolean contact = contacts[i].isHigh();
+                            // incrémentation compteur - invalidation echantillon
+                            
+                            Boolean sensor = false;  // pour test
+                            Boolean contact = false; // pour test
+                            
+                            if (!sensor && !contact) {
+
+                                this.contexte.getTotaux()[i]++;
+
+                                System.out.println("Total echantillon:" + i + " " + this.contexte.getTotaux()[i]);
+
+                            } else {
+
+                                this.contexte.getActifs()[i] = false;
+                                this.contexte.getErreurs()[i] = true;
+
+                                System.out.println("Test échoué echantillon:" + i);
+                            }
+
+                            notifierResultat();
+
                         }
 
-                        // désactiver relais
-                        relais[i].low();
-                        // lecture sensor
-                        System.out.println("Lecture sensor: " + i);
-                        boolean sensor = sensors[i].isHigh();
-                        // lecture contact
-                        System.out.println("Lecture contact: " + i);
-                        boolean contact = contacts[i].isHigh();
-                        // incrémentation compteur - invalidation echantillon
-                        if (!sensor && !contact) {
+                    }
 
-                            totaux[i]++;
-                            this.setTotaux(totaux);
-                            System.out.println("Total echantillon:" + i + " " + this.totaux[i]);
+                } else {
 
-                        } else {
+                    while (SerrureWeb.contexte.getPause()) {
 
-                            this.actifs[i] = false;
-                            this.erreurs[i] = true;
-                            this.setErreurs(erreurs);
-                            System.out.println("Test échoué echantillon:" + i);
+                        if (SerrureWeb.contexte.getChanged()) {
+
+                            orderProcessor.analyser(SerrureWeb.contexte.getCommande());
                         }
-
-                        notifierResultat();
 
                     }
 
                 }
 
-            } else {
+                echValide = this.contexte.getActifs()[0] || this.contexte.getActifs()[1] || this.contexte.getActifs()[2];
+                if (SerrureWeb.contexte.getChanged()) {
 
-                while (SerrureWeb.pause) {
+                    orderProcessor.analyser(SerrureWeb.contexte.getCommande());
+                }
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
             }
 
-            echValide = actifs[0] || actifs[1] || actifs[2];
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
+            System.out.println("***** Fin de sequence  *****");
         }
 
-        System.out.println("***** Fin de sequence  *****");
-
     }
-
-    public boolean[] getErreurs() {
-        return erreurs;
-    }
-
-    public boolean[] getActifs() {
-        return actifs;
-    }
-
-    public long[] getTotaux() {
-        return totaux;
-    }
-
-    public void setErreurs(boolean[] erreurs) {
-        this.erreurs = erreurs;
-        // this.setChanged();
-        // this.notifyObservers(this.getErreurs());
-    }
-
-    public void setActifs(boolean[] actifs) {
-        this.actifs = actifs;
-    }
-
-    public void setTotaux(long[] totaux) {
-        this.totaux = totaux;
-
-    }
-
-    public void initTotaux(long[] totaux) {
-        this.totaux = totaux;
-    }
-
-  
 
     public Resultat getResultat() {
         return resultat;
@@ -168,19 +162,35 @@ public class Controleur extends Observable {
         this.resultat = resultat;
     }
 
+    public Contexte getContexte() {
+        return contexte;
+    }
+
+    public void setContexte(Contexte contexte) {
+        this.contexte = contexte;
+    }
+
+    public Boolean getActif() {
+        return actif;
+    }
+
+    public void setActif(Boolean actif) {
+        this.actif = actif;
+    }
+    
+    
+
     public void notifierResultat() {   // notification au ModemWriter
 
-        resultat.setErreurs(erreurs);
-        resultat.setTotaux(totaux);
-        resultat.setActifs(actifs);
-        resultat.setPauses(pauses);
-        resultat.setInterrompus(interrompus);
-        resultat.setFin(!actifs[0] && !actifs[1] && !actifs[2]);
+        resultat.setErreurs(this.contexte.getErreurs());
+        resultat.setTotaux(this.contexte.getTotaux());
+        resultat.setActifs(this.contexte.getActifs());
+        resultat.setPauses(this.contexte.getPauses());
+        resultat.setInterrompus(this.contexte.getInterrompus());
+        resultat.setFin(!this.contexte.getActifs()[0] && !this.contexte.getActifs()[1] && !this.contexte.getActifs()[2]);
         this.setChanged();
         this.notifyObservers(this.getResultat());
 
     }
-
-   
 
 }
