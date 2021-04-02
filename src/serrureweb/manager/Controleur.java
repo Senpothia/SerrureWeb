@@ -1,5 +1,6 @@
 package serrureweb.manager;
 
+import serrureweb.OrderProcessor;
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.GpioPinDigitalInput;
@@ -19,8 +20,7 @@ public class Controleur extends Observable {
     public Resultat resultat = new Resultat();
 
     Contexte contexte = new Contexte();
-    private OrderProcessor orderProcessor = new OrderProcessor();
-    
+
     private Boolean actif = false;
 
     // GPIO  -- Version Raspberry
@@ -37,7 +37,7 @@ public class Controleur extends Observable {
     final GpioPinDigitalInput contact1 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_05, PinPullResistance.PULL_UP);
     final GpioPinDigitalInput contact2 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_06, PinPullResistance.PULL_UP);
     final GpioPinDigitalInput contact3 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_07, PinPullResistance.PULL_UP);
-    */
+     */
     private boolean stateSensor1;
     private boolean stateSensor2;
     private boolean stateSensor3;
@@ -51,7 +51,7 @@ public class Controleur extends Observable {
     private GpioPinDigitalOutput[] relais = {relais1, relais2, relais3};
     private GpioPinDigitalInput[] sensors = {sensor1, sensor2, sensor3};
     private GpioPinDigitalInput[] contacts = {contact1, contact2, contact3};
-    */
+     */
     public void start() {
 
         System.out.println("***** démarrage séquence de test du contrôleur  *****");
@@ -59,12 +59,6 @@ public class Controleur extends Observable {
         resultat.setErreurs(this.contexte.getErreurs());
 
         while (SerrureWeb.contexte.getActif()) {
-
-            if (SerrureWeb.contexte.getChanged()) {
-
-                orderProcessor.analyser(SerrureWeb.contexte.getCommande());
-
-            }
 
             while (SerrureWeb.contexte.getMarche() && echValide) {
 
@@ -77,7 +71,7 @@ public class Controleur extends Observable {
 
                             // activer relais
                             System.out.println("Activation relais: " + i);
-                           // relais[i].high();
+                            // relais[i].high();
                             // delai anti-rebond
                             try {
                                 Thread.sleep(1000);
@@ -86,19 +80,19 @@ public class Controleur extends Observable {
                             }
 
                             // désactiver relais
-                           // relais[i].low();
+                            // relais[i].low();
                             // lecture sensor
                             System.out.println("Lecture sensor: " + i);
-                           // boolean sensor = sensors[i].isHigh();
-                           
+                            // boolean sensor = sensors[i].isHigh();
+
                             // lecture contact
                             System.out.println("Lecture contact: " + i);
-                           // boolean contact = contacts[i].isHigh();
+                            // boolean contact = contacts[i].isHigh();
                             // incrémentation compteur - invalidation echantillon
-                            
+
                             Boolean sensor = false;  // pour test
                             Boolean contact = false; // pour test
-                            
+
                             if (!sensor && !contact) {
 
                                 this.contexte.getTotaux()[i]++;
@@ -123,20 +117,12 @@ public class Controleur extends Observable {
 
                     while (SerrureWeb.contexte.getPause()) {
 
-                        if (SerrureWeb.contexte.getChanged()) {
-
-                            orderProcessor.analyser(SerrureWeb.contexte.getCommande());
-                        }
-
                     }
 
                 }
 
                 echValide = this.contexte.getActifs()[0] || this.contexte.getActifs()[1] || this.contexte.getActifs()[2];
-                if (SerrureWeb.contexte.getChanged()) {
 
-                    orderProcessor.analyser(SerrureWeb.contexte.getCommande());
-                }
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException ex) {
@@ -177,8 +163,6 @@ public class Controleur extends Observable {
     public void setActif(Boolean actif) {
         this.actif = actif;
     }
-    
-    
 
     public void notifierResultat() {   // notification au ModemWriter
 

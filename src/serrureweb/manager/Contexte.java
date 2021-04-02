@@ -2,16 +2,16 @@ package serrureweb.manager;
 
 public class Contexte {
     
-    private Boolean marche;   // Etat de la séquence en cours
-    private Boolean pause;    // Etat de la séquence en cours
-    private Boolean actif;    // Etat de la séquence en cours
+    private Boolean marche = false;   // Etat de la séquence en cours
+    private Boolean pause = false;    // Etat de la séquence en cours
+    private Boolean actif = true;    // Etat de la séquence en cours
     private long[] totaux = {0, 0, 0};
     private boolean[] erreurs = {false, false, false};
     private boolean[] pauses = {false, false, false};
     private boolean[] actifs = {false, false, false};
     private boolean[] interrompus = {false, false, false};
-    private String commande;
-    private Boolean changed;
+    private String commande = null;
+    private Boolean changed = false;
 
     public Contexte() {
     }
