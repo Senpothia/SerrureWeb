@@ -4,7 +4,7 @@ public class Contexte {
     
     private Boolean marche = false;   // Etat de la séquence en cours
     private Boolean pause = false;    // Etat de la séquence en cours
-    private Boolean actif = true;    // Etat de la séquence en cours
+    private Boolean actif = false;    // Etat de la séquence en cours
     private long[] totaux = {0, 0, 0};
     private boolean[] erreurs = {false, false, false};
     private boolean[] pauses = {false, false, false};
@@ -94,6 +94,11 @@ public class Contexte {
 
     public void setActif(Boolean actif) {
         this.actif = actif;
+    }
+
+    @Override
+    public String toString() {
+        return "Contexte{" + "marche=" + marche + ", pause=" + pause + ", actif=" + actif + ", totaux=" + totaux + ", erreurs=" + erreurs + ", pauses=" + pauses + ", actifs=" + actifs + ", interrompus=" + interrompus + ", commande=" + commande + ", changed=" + changed + '}';
     }
     
     

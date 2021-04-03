@@ -14,14 +14,9 @@ import serrureweb.manager.Resultat;
 
 public class ModemWriter implements Runnable, Observer {
 
-    // private String server = Constants.SERVER;
-    //private int port = Constants.PORT;
     private Socket socket;
     private Controleur controleur;
-    public boolean[] echantillons = {false, false, false};
-    public long[] totaux = {0, 0, 0};
-    public boolean[] erreurs = {false, false, false};
-    public boolean[] actifs = {false, false, false};
+  
     public boolean envoyer = false;
     private String rapport;
     
@@ -48,11 +43,6 @@ public class ModemWriter implements Runnable, Observer {
         
         if (this.controleur == null) {
             this.controleur = new Controleur();
-            this.controleur.getContexte().setActifs(this.actifs);
-            this.controleur.getContexte().setTotaux(this.totaux);
-            this.controleur.getContexte().setErreurs(this.erreurs);
-            SerrureWeb.contexte.setMarche(false);
-            SerrureWeb.contexte.setActif(true);
             this.controleur.addObserver(this);
             
         }
@@ -67,24 +57,16 @@ public class ModemWriter implements Runnable, Observer {
     public void run() {
         
         System.out.println("Lancement de l'émetteur");
-        // this.controleur.start(); // démarrage du contrôleur
+        this.controleur.start(); // démarrage du contrôleur
         try {
             
             while (!socket.isClosed()) {
-                
-                if (SerrureWeb.contexte.getMarche() && !controleur.getActif()) {
-                    
-                    this.controleur.start();
-                    System.out.println("Contrôleur lancé!");
-                    // SerrureWeb.changed = false;
-                    SerrureWeb.contexte.setChanged(false);
-                    
-                }
+               
                 PrintWriter writer = null;
                 writer = new PrintWriter(this.socket.getOutputStream());
-                //System.out.println("serrureweb.com.ModemWriter.run()");
+               
                 if (envoyer) {
-                    
+                    System.out.println("Nouveau rapport rapport");
                     writer.println(rapport);
                     writer.flush();
                     System.out.println("Fin de l'envoie du rapport");

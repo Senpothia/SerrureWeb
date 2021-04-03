@@ -19,8 +19,7 @@ public class Controleur extends Observable {
 
     public Resultat resultat = new Resultat();
 
-    Contexte contexte = new Contexte();
-
+    // Contexte contexte = new Contexte();
     private Boolean actif = false;
 
     // GPIO  -- Version Raspberry
@@ -55,8 +54,13 @@ public class Controleur extends Observable {
     public void start() {
 
         System.out.println("***** démarrage séquence de test du contrôleur  *****");
-        boolean echValide = this.contexte.getActifs()[0] || this.contexte.getActifs()[1] || this.contexte.getActifs()[2];
-        resultat.setErreurs(this.contexte.getErreurs());
+        boolean echValide = SerrureWeb.contexte.getActifs()[0] || SerrureWeb.contexte.getActifs()[1] || SerrureWeb.contexte.getActifs()[2];
+        resultat.setErreurs(SerrureWeb.contexte.getErreurs());
+
+        while (!SerrureWeb.contexte.getActif()) {
+
+          //  System.out.println("En attente de démarrage");
+        }
 
         while (SerrureWeb.contexte.getActif()) {
 
@@ -65,9 +69,10 @@ public class Controleur extends Observable {
                 if (!SerrureWeb.contexte.getPause()) {
 
                     System.out.println("***** Nouvelle sequence  *****");
+                    /*
                     for (int i = 0; i < 3; i++) {
 
-                        if (this.contexte.getActifs()[i]) {
+                        if (SerrureWeb.contexte.getActifs()[i]) {
 
                             // activer relais
                             System.out.println("Activation relais: " + i);
@@ -95,14 +100,14 @@ public class Controleur extends Observable {
 
                             if (!sensor && !contact) {
 
-                                this.contexte.getTotaux()[i]++;
+                                SerrureWeb.contexte.getTotaux()[i]++;
 
-                                System.out.println("Total echantillon:" + i + " " + this.contexte.getTotaux()[i]);
+                                System.out.println("Total echantillon:" + i + " " + SerrureWeb.contexte.getTotaux()[i]);
 
                             } else {
 
-                                this.contexte.getActifs()[i] = false;
-                                this.contexte.getErreurs()[i] = true;
+                                SerrureWeb.contexte.getActifs()[i] = false;
+                                SerrureWeb.contexte.getErreurs()[i] = true;
 
                                 System.out.println("Test échoué echantillon:" + i);
                             }
@@ -111,17 +116,21 @@ public class Controleur extends Observable {
 
                         }
 
-                    }
+                    }*/
+
+                    methodeDetest();
 
                 } else {
 
                     while (SerrureWeb.contexte.getPause()) {
 
+                        System.err.println("Controleur en Pause");
+
                     }
 
                 }
 
-                echValide = this.contexte.getActifs()[0] || this.contexte.getActifs()[1] || this.contexte.getActifs()[2];
+                echValide = SerrureWeb.contexte.getActifs()[0] || SerrureWeb.contexte.getActifs()[1] || SerrureWeb.contexte.getActifs()[2];
 
                 try {
                     Thread.sleep(5000);
@@ -131,9 +140,8 @@ public class Controleur extends Observable {
 
             }
 
-            System.out.println("***** Fin de sequence  *****");
         }
-
+        System.out.println("***** Fin de sequence  *****");
     }
 
     public Resultat getResultat() {
@@ -148,12 +156,8 @@ public class Controleur extends Observable {
         this.resultat = resultat;
     }
 
-    public Contexte getContexte() {
-        return contexte;
-    }
-
     public void setContexte(Contexte contexte) {
-        this.contexte = contexte;
+        SerrureWeb.contexte = contexte;
     }
 
     public Boolean getActif() {
@@ -166,14 +170,37 @@ public class Controleur extends Observable {
 
     public void notifierResultat() {   // notification au ModemWriter
 
-        resultat.setErreurs(this.contexte.getErreurs());
-        resultat.setTotaux(this.contexte.getTotaux());
-        resultat.setActifs(this.contexte.getActifs());
-        resultat.setPauses(this.contexte.getPauses());
-        resultat.setInterrompus(this.contexte.getInterrompus());
-        resultat.setFin(!this.contexte.getActifs()[0] && !this.contexte.getActifs()[1] && !this.contexte.getActifs()[2]);
+        resultat.setErreurs(SerrureWeb.contexte.getErreurs());
+        resultat.setTotaux(SerrureWeb.contexte.getTotaux());
+        resultat.setActifs(SerrureWeb.contexte.getActifs());
+        resultat.setPauses(SerrureWeb.contexte.getPauses());
+        resultat.setInterrompus(SerrureWeb.contexte.getInterrompus());
+        resultat.setFin(!SerrureWeb.contexte.getActifs()[0] && !SerrureWeb.contexte.getActifs()[1] && !SerrureWeb.contexte.getActifs()[2]);
         this.setChanged();
         this.notifyObservers(this.getResultat());
+
+    }
+
+    private void methodeDetest() {
+
+        /*
+        long compteur1 = SerrureWeb.contexte.getTotaux()[0];
+        long compteur2 = SerrureWeb.contexte.getTotaux()[1];
+        long compteur3 = SerrureWeb.contexte.getTotaux()[2];
+         */
+        System.out.println("*****   Test");
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Controleur.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        long compteur1 = SerrureWeb.contexte.getTotaux()[0]++;
+        long compteur2 = SerrureWeb.contexte.getTotaux()[1]++;
+        long compteur3 = SerrureWeb.contexte.getTotaux()[2]++;
+        long totaux[] = {compteur1, compteur2, compteur3};
+        SerrureWeb.contexte.setTotaux(totaux);
+        notifierResultat();
+        System.out.println("Din Test    ************");
 
     }
 
