@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import serrureweb.Constants.Constants;
+import serrureweb.manager.Controleur;
 
 public class Modem {
 
@@ -38,6 +39,9 @@ public class Modem {
 
                     Thread recepteur = new Thread(new ModemReader(socket));
                     recepteur.start();
+                    
+                    Thread Controleur = new Thread(new Controleur());
+                    Controleur.start();
                     
                 } catch (IOException ex) {
                     Logger.getLogger(Modem.class.getName()).log(Level.SEVERE, null, ex);

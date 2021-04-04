@@ -15,10 +15,9 @@ import java.util.logging.Logger;
 import javax.sound.midi.Sequence;
 import serrureweb.SerrureWeb;
 
-public class Controleur extends Observable {
+public class Controleur extends Observable implements Runnable {
 
-    public Resultat resultat = new Resultat();
-
+    // public Resultat resultat = new Resultat();
     // Contexte contexte = new Contexte();
     private Boolean actif = false;
 
@@ -55,15 +54,21 @@ public class Controleur extends Observable {
 
         System.out.println("***** démarrage séquence de test du contrôleur  *****");
         boolean echValide = SerrureWeb.contexte.getActifs()[0] || SerrureWeb.contexte.getActifs()[1] || SerrureWeb.contexte.getActifs()[2];
-        resultat.setErreurs(SerrureWeb.contexte.getErreurs());
+        //resultat.setErreurs(SerrureWeb.contexte.getErreurs());
 
         while (!SerrureWeb.contexte.getActif()) {
 
-          //  System.out.println("En attente de démarrage");
+            System.out.println("Actif? " + SerrureWeb.contexte.getActif());
+            System.out.println("En attente de démarrage");
         }
 
         while (SerrureWeb.contexte.getActif()) {
 
+            echValide = SerrureWeb.contexte.getActifs()[0] || SerrureWeb.contexte.getActifs()[1] || SerrureWeb.contexte.getActifs()[2];
+            System.out.println("Actif? " + SerrureWeb.contexte.getActif());
+            System.out.println("Marche? " + SerrureWeb.contexte.getMarche());
+            System.out.println("echValide? " + echValide);
+            int i = 0;
             while (SerrureWeb.contexte.getMarche() && echValide) {
 
                 if (!SerrureWeb.contexte.getPause()) {
@@ -118,7 +123,8 @@ public class Controleur extends Observable {
 
                     }*/
 
-                    methodeDetest();
+                    methodeDetest(i);
+                    i++;
 
                 } else {
 
@@ -144,6 +150,7 @@ public class Controleur extends Observable {
         System.out.println("***** Fin de sequence  *****");
     }
 
+    /*
     public Resultat getResultat() {
         return resultat;
     }
@@ -155,7 +162,7 @@ public class Controleur extends Observable {
     public void initResultat(Resultat resultat) {
         this.resultat = resultat;
     }
-
+     */
     public void setContexte(Contexte contexte) {
         SerrureWeb.contexte = contexte;
     }
@@ -168,7 +175,8 @@ public class Controleur extends Observable {
         this.actif = actif;
     }
 
-    public void notifierResultat() {   // notification au ModemWriter
+    /*
+    public void notifierResultat() {   // notification au ModemWriter - Verion pattern Observer
 
         resultat.setErreurs(SerrureWeb.contexte.getErreurs());
         resultat.setTotaux(SerrureWeb.contexte.getTotaux());
@@ -180,28 +188,100 @@ public class Controleur extends Observable {
         this.notifyObservers(this.getResultat());
 
     }
+     */
+    public void notifierResultat() {   // notification au ModemWriter - Version standard
 
-    private void methodeDetest() {
+        SerrureWeb.contexte.setFin(!SerrureWeb.contexte.getActifs()[0] && !SerrureWeb.contexte.getActifs()[1] && !SerrureWeb.contexte.getActifs()[2]);
+        // A faire ajouter le traitement des cas d'erreurs
+        SerrureWeb.contexte.setChanged(true);
+    }
 
-        /*
+    private void methodeDetest(int i) {
+
+        System.out.println("*****   Test: " + i);
         long compteur1 = SerrureWeb.contexte.getTotaux()[0];
         long compteur2 = SerrureWeb.contexte.getTotaux()[1];
         long compteur3 = SerrureWeb.contexte.getTotaux()[2];
-         */
-        System.out.println("*****   Test");
+
         try {
             Thread.sleep(2000);
         } catch (InterruptedException ex) {
             Logger.getLogger(Controleur.class.getName()).log(Level.SEVERE, null, ex);
         }
-        long compteur1 = SerrureWeb.contexte.getTotaux()[0]++;
-        long compteur2 = SerrureWeb.contexte.getTotaux()[1]++;
-        long compteur3 = SerrureWeb.contexte.getTotaux()[2]++;
-        long totaux[] = {compteur1, compteur2, compteur3};
-        SerrureWeb.contexte.setTotaux(totaux);
-        notifierResultat();
-        System.out.println("Din Test    ************");
+        if (SerrureWeb.contexte.getActif()) {
 
+            if (!SerrureWeb.contexte.getPause()) {
+
+                if (SerrureWeb.contexte.getActifs()[0] && !SerrureWeb.contexte.getPauses()[0]) {
+
+                    compteur1 = SerrureWeb.contexte.getTotaux()[0] + 1L;
+                    System.out.println("Compteur 1: " + compteur1);
+                }
+
+                if (SerrureWeb.contexte.getPauses()[0]) {
+
+                    System.err.println("Echantillon 1 en pause");
+                }
+
+                if (SerrureWeb.contexte.getInterrompus()[0]) {
+
+                    System.err.println("Echantillon 1 en interrompu");
+                }
+
+                if (SerrureWeb.contexte.getActifs()[1] && !SerrureWeb.contexte.getPauses()[1]) {
+
+                    compteur2 = SerrureWeb.contexte.getTotaux()[1] + 1L;
+                    System.out.println("Compteur 2: " + compteur2);
+                }
+
+                if (SerrureWeb.contexte.getPauses()[1]) {
+
+                    System.err.println("Echantillon 2 en pause");
+                }
+
+                if (SerrureWeb.contexte.getInterrompus()[1]) {
+
+                    System.err.println("Echantillon 2 en interrompu");
+                }
+
+                if (SerrureWeb.contexte.getActifs()[2] && !SerrureWeb.contexte.getPauses()[2]) {
+
+                    compteur3 = SerrureWeb.contexte.getTotaux()[2] + 1L;
+                    System.out.println("Compteur 3: " + compteur3);
+                }
+
+                if (SerrureWeb.contexte.getPauses()[2]) {
+
+                    System.err.println("Echantillon 3 en pause");
+                }
+
+                if (SerrureWeb.contexte.getInterrompus()[2]) {
+
+                    System.err.println("Echantillon 3 en interrompu");
+                }
+
+                long totaux[] = {compteur1, compteur2, compteur3};
+
+                SerrureWeb.contexte.setTotaux(totaux);
+                notifierResultat();
+                System.out.println("Fin de Test    ************");
+
+            } else {
+
+                System.out.println("****   La séquende est en pause   ******");
+            }
+
+        } else {
+
+            System.out.println("La séquence de test a été arrêté");
+        }
+
+    }
+
+    @Override
+    public void run() {
+
+        start();
     }
 
 }

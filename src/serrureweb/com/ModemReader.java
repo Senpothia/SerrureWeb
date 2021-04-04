@@ -60,13 +60,4 @@ public class ModemReader implements Runnable {
         }
 
     }
-
-    private void notifierOrdre(String commande) {
-
-        SerrureWeb.contexte.setCommande(commande);
-        SerrureWeb.contexte.setChanged(true);
-
-    }
-
-
 }

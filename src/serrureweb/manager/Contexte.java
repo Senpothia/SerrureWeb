@@ -11,7 +11,9 @@ public class Contexte {
     private boolean[] actifs = {false, false, false};
     private boolean[] interrompus = {false, false, false};
     private String commande = null;
+    private String rapport = null;
     private Boolean changed = false;
+    private Boolean fin = false;
 
     public Contexte() {
     }
@@ -95,6 +97,24 @@ public class Contexte {
     public void setActif(Boolean actif) {
         this.actif = actif;
     }
+
+    public Boolean getFin() {
+        return fin;
+    }
+
+    public void setFin(Boolean fin) {
+        this.fin = fin;
+    }
+
+    public String getRapport() {
+        return rapport;
+    }
+
+    public void setRapport(String rapport) {
+        this.rapport = rapport;
+    }
+    
+    
 
     @Override
     public String toString() {
