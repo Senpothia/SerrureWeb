@@ -1,7 +1,7 @@
 package serrureweb.manager;
 
-import serrureweb.OrderProcessor;
 import com.pi4j.io.gpio.GpioController;
+
 import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.GpioPinDigitalInput;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
@@ -9,7 +9,6 @@ import com.pi4j.io.gpio.PinPullResistance;
 import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.RaspiPin;
 import java.util.Observable;
-import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.midi.Sequence;
@@ -22,7 +21,6 @@ public class Controleur extends Observable implements Runnable {
     private Boolean actif = false;
 
     // GPIO  -- Version Raspberry
-    /*
     final GpioController gpio = GpioFactory.getInstance();
     final GpioPinDigitalOutput relais1 = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_25, "REL1", PinState.LOW);
     final GpioPinDigitalOutput relais2 = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_28, "REL2", PinState.LOW);
@@ -35,7 +33,7 @@ public class Controleur extends Observable implements Runnable {
     final GpioPinDigitalInput contact1 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_05, PinPullResistance.PULL_UP);
     final GpioPinDigitalInput contact2 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_06, PinPullResistance.PULL_UP);
     final GpioPinDigitalInput contact3 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_07, PinPullResistance.PULL_UP);
-     */
+
     private boolean stateSensor1;
     private boolean stateSensor2;
     private boolean stateSensor3;
@@ -45,11 +43,10 @@ public class Controleur extends Observable implements Runnable {
     private boolean stateContact3;
 
     // pour test
-    /*
     private GpioPinDigitalOutput[] relais = {relais1, relais2, relais3};
     private GpioPinDigitalInput[] sensors = {sensor1, sensor2, sensor3};
     private GpioPinDigitalInput[] contacts = {contact1, contact2, contact3};
-     */
+
     public void start() {
 
         System.out.println("***** démarrage séquence de test du contrôleur  *****");
@@ -68,7 +65,7 @@ public class Controleur extends Observable implements Runnable {
             System.out.println("Actif? " + SerrureWeb.contexte.getActif());
             System.out.println("Marche? " + SerrureWeb.contexte.getMarche());
             System.out.println("echValide? " + echValide);
-            int i = 0;
+            int k = 0;
             while (SerrureWeb.contexte.getMarche() && echValide) {
 
                 if (!SerrureWeb.contexte.getPause()) {
@@ -123,8 +120,9 @@ public class Controleur extends Observable implements Runnable {
 
                     }*/
 
-                    methodeDetest(i);
-                    i++;
+                    //  methodeDetest(i);
+                    k++;
+                    sequence(k);
 
                 } else {
 
@@ -274,6 +272,79 @@ public class Controleur extends Observable implements Runnable {
         } else {
 
             System.out.println("La séquence de test a été arrêté");
+        }
+
+    }
+
+    void sequence(int k) {
+
+        System.out.println("*****   Test: " + k);
+// sequence de test
+/*
+        System.out.println("*****   Test: " + i);
+        // activer relais   
+        System.out.println("Activation relais: ");
+        relais[0].high();
+        // delai anti-rebond
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        // désactiver relais
+        relais[0].low();
+         */
+// Fin sequence de test
+
+        for (int i = 0; i < 3; i++) {
+
+            if (SerrureWeb.contexte.getActifs()[i]) {
+
+                // activer relais
+                System.out.println("----------------------------------------------");
+                System.out.println("Activation relais: " + i);
+                relais[i].high();
+                // delai anti-rebond
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                // désactiver relais
+                relais[i].low();
+                // lecture sensor
+                System.out.println("Lecture sensor: " + i);
+                boolean sensor = sensors[i].isHigh();
+
+                // lecture contact
+                System.out.println("Lecture contact: " + i);
+                boolean contact = contacts[i].isHigh();
+                // incrémentation compteur - invalidation echantillon
+
+                // Boolean sensor = false;  // pour test
+                //Boolean contact = false; // pour test
+                if (!sensor && !contact) {
+
+                    SerrureWeb.contexte.getTotaux()[i] = SerrureWeb.contexte.getTotaux()[i] + 1L;
+                    System.out.println("Total echantillon:" + i + " " + SerrureWeb.contexte.getTotaux()[i]);
+
+                } else {
+
+                    SerrureWeb.contexte.getActifs()[i] = false;
+                    SerrureWeb.contexte.getErreurs()[i] = true;
+                    System.out.println("Test échoué echantillon:" + i);
+                }
+
+                notifierResultat();
+
+            } else {
+
+                System.err.println("Echantillon:" + i + " en erreur! ou inactif");
+
+            }
+
         }
 
     }

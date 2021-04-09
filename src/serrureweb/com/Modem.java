@@ -32,7 +32,7 @@ public class Modem {
 
                 try {
 
-                    Socket socket = new Socket(Constants.LOCAL, Constants.PORT);
+                    Socket socket = new Socket(Constants.SERVER, Constants.PORT);
                     
                     Thread emetteur = new Thread(new ModemWriter(socket));
                     emetteur.start();
