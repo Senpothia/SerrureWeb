@@ -304,6 +304,28 @@ public class Controleur extends Observable implements Runnable {
                 // activer relais
                 System.out.println("----------------------------------------------");
                 System.out.println("Activation relais: " + i);
+                
+                    // lecture sensor
+                System.out.println("Lecture sensor: " + i);
+                boolean sensor = sensors[i].isHigh();
+
+                // lecture contact
+                System.out.println("Lecture contact: " + i);
+                boolean contact = contacts[i].isHigh();
+                
+                  if (!sensor && contact) {
+
+                    SerrureWeb.contexte.getTotaux()[i] = SerrureWeb.contexte.getTotaux()[i] + 1L;
+                    System.out.println("Total echantillon:" + i + " " + SerrureWeb.contexte.getTotaux()[i]);
+
+                } else {
+
+                    SerrureWeb.contexte.getActifs()[i] = false;
+                    SerrureWeb.contexte.getErreurs()[i] = true;
+                    System.out.println("Test échoué echantillon:" + i);
+                }
+                
+                
                 relais[i].high();
                 // delai anti-rebond
                 try {
@@ -316,11 +338,11 @@ public class Controleur extends Observable implements Runnable {
                 relais[i].low();
                 // lecture sensor
                 System.out.println("Lecture sensor: " + i);
-                boolean sensor = sensors[i].isHigh();
+                sensor = sensors[i].isHigh();
 
                 // lecture contact
                 System.out.println("Lecture contact: " + i);
-                boolean contact = contacts[i].isHigh();
+                contact = contacts[i].isHigh();
                 // incrémentation compteur - invalidation echantillon
 
                 // Boolean sensor = false;  // pour test
