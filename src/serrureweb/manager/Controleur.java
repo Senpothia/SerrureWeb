@@ -320,7 +320,7 @@ public class Controleur extends Observable implements Runnable {
 
                 } else {
 
-                    SerrureWeb.contexte.getActifs()[i] = false;
+                    SerrureWeb.contexte.getActifs()[i] = true;
                     SerrureWeb.contexte.getErreurs()[i] = true;
                     System.out.println("Test échoué echantillon:" + i);
                 }
