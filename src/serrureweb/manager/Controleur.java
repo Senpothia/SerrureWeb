@@ -337,8 +337,6 @@ public class Controleur extends Observable implements Runnable {
                     System.out.println("Test échoué echantillon:" + i);
                 }
 
-                notifierResultat();
-
             } else {
 
                 System.err.println("Echantillon:" + i + " en erreur! ou inactif");
@@ -346,6 +344,8 @@ public class Controleur extends Observable implements Runnable {
             }
 
         }
+
+        notifierResultat();
 
     }
 

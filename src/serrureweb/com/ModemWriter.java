@@ -171,7 +171,7 @@ public class ModemWriter implements Runnable {
 
         Boolean actif2 = SerrureWeb.contexte.getActifs()[1];
 
-        if (actif1) {
+        if (actif2) {
 
             rapport = rapport + "true>";
 
