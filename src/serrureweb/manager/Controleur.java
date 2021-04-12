@@ -70,7 +70,7 @@ public class Controleur extends Observable implements Runnable {
 
                 if (!SerrureWeb.contexte.getPause()) {
 
-                    System.out.println("***** Nouvelle sequence  *****");
+                    System.out.println("******** DEBUT DE SEQUENCE *********");
                     /*
                     for (int i = 0; i < 3; i++) {
 
@@ -123,12 +123,13 @@ public class Controleur extends Observable implements Runnable {
                     //  methodeDetest(i);
                     k++;
                     sequence(k);
+                    System.out.println("******** FIN DE SEQUENCE *********");
 
                 } else {
 
                     while (SerrureWeb.contexte.getPause()) {
 
-                        System.err.println("Controleur en Pause");
+                        System.err.println("!!!!!!!   Controleur en Pause   !!!!!!!");
 
                     }
 
@@ -299,33 +300,33 @@ public class Controleur extends Observable implements Runnable {
 
         for (int i = 0; i < 3; i++) {
 
-            if (SerrureWeb.contexte.getActifs()[i]) {
+            if (SerrureWeb.contexte.getActifs()[i] && !SerrureWeb.contexte.getPauses()[i] && !SerrureWeb.contexte.getErreurs()[i]) {
 
                 // activer relais
                 System.out.println("----------------------------------------------");
+                System.err.println(">>>>>>>   Echantillon:" + i + " ACTIF");
                 System.out.println("Activation relais: " + i);
-                
-                    // lecture sensor
+
+                // lecture sensor
                 System.out.println("Lecture sensor: " + i);
                 boolean sensor = sensors[i].isHigh();
 
                 // lecture contact
                 System.out.println("Lecture contact: " + i);
                 boolean contact = contacts[i].isHigh();
-                
-                  if (!sensor && contact) {
+
+                if (!sensor && contact) {
 
                     SerrureWeb.contexte.getTotaux()[i] = SerrureWeb.contexte.getTotaux()[i] + 1L;
-                    System.out.println("Total echantillon:" + i + " " + SerrureWeb.contexte.getTotaux()[i]);
+                    System.out.println("#######   TOTAL ECHANTILLON:" + i + " " + SerrureWeb.contexte.getTotaux()[i]);
 
                 } else {
 
                     SerrureWeb.contexte.getActifs()[i] = true;
                     SerrureWeb.contexte.getErreurs()[i] = true;
-                    System.out.println("Test échoué echantillon:" + i);
+                    System.out.println("///////   Test échoué echantillon:" + i);
                 }
-                
-                
+
                 relais[i].high();
                 // delai anti-rebond
                 try {
@@ -354,14 +355,30 @@ public class Controleur extends Observable implements Runnable {
 
                 } else {
 
-                    SerrureWeb.contexte.getActifs()[i] = false;
+                    SerrureWeb.contexte.getActifs()[i] = true;
                     SerrureWeb.contexte.getErreurs()[i] = true;
-                    System.out.println("Test échoué echantillon:" + i);
+                    System.out.println("///////   Test échoué echantillon:" + i);
                 }
 
             } else {
 
-                System.err.println("Echantillon:" + i + " en erreur! ou inactif");
+                if (SerrureWeb.contexte.getPauses()[i]) {
+
+                    System.err.println(">>>>>>>   ECHANTILLON:" + i + " EN PAUSE");
+
+                }
+
+                if (SerrureWeb.contexte.getErreurs()[i]) {
+
+                    System.err.println(">>>>>>>   ECHANTILLON:" + i + " EN ERREUR");
+
+                }
+
+                if (!SerrureWeb.contexte.getActifs()[i]) {
+
+                    System.err.println(">>>>>>>   Echantillon:" + i + " INACTIF");
+
+                }
 
             }
 
