@@ -71,54 +71,7 @@ public class Controleur extends Observable implements Runnable {
                 if (!SerrureWeb.contexte.getPause()) {
 
                     System.out.println("******** DEBUT DE SEQUENCE *********");
-                    /*
-                    for (int i = 0; i < 3; i++) {
-
-                        if (SerrureWeb.contexte.getActifs()[i]) {
-
-                            // activer relais
-                            System.out.println("Activation relais: " + i);
-                            // relais[i].high();
-                            // delai anti-rebond
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException ex) {
-                                Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-
-                            // désactiver relais
-                            // relais[i].low();
-                            // lecture sensor
-                            System.out.println("Lecture sensor: " + i);
-                            // boolean sensor = sensors[i].isHigh();
-
-                            // lecture contact
-                            System.out.println("Lecture contact: " + i);
-                            // boolean contact = contacts[i].isHigh();
-                            // incrémentation compteur - invalidation echantillon
-
-                            Boolean sensor = false;  // pour test
-                            Boolean contact = false; // pour test
-
-                            if (!sensor && !contact) {
-
-                                SerrureWeb.contexte.getTotaux()[i]++;
-
-                                System.out.println("Total echantillon:" + i + " " + SerrureWeb.contexte.getTotaux()[i]);
-
-                            } else {
-
-                                SerrureWeb.contexte.getActifs()[i] = false;
-                                SerrureWeb.contexte.getErreurs()[i] = true;
-
-                                System.out.println("Test échoué echantillon:" + i);
-                            }
-
-                            notifierResultat();
-
-                        }
-
-                    }*/
+                   
 
                     //  methodeDetest(i);
                     k++;
