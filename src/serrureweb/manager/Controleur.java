@@ -297,39 +297,7 @@ public class Controleur extends Observable implements Runnable {
                 }
 
                 relais[i].high();
-                // delai anti-rebond
-
-                /*
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-               
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                // désactiver relais
-                relais[i].low();
-                
-                 try {
-                    Thread.sleep(500);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                // lecture sensor
-                //System.out.println("Lecture sensor AP: " + i);
-                sensor = sensors[i].isHigh();
-                System.out.println("Lecture sensor AP: " + i + " " + sensor);
-                // lecture contact
-                //System.out.println("Lecture contact AP: " + i);
-                contact = contacts[i].isHigh();
-                System.out.println("Lecture contact AP: " + i + " " + contact);
-                 */
+              
                 if (SerrureWeb.contexte.getTypes()[i].equals("DX200I")) {
                     
                      // delai anti-rebond
