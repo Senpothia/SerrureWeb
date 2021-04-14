@@ -230,7 +230,7 @@ public class Controleur extends Observable implements Runnable {
 
     void sequence(int k) {
 
-        System.out.println("*****   Test: " + k);
+        System.out.println("**************   Test: " + k + "*********************");
 // sequence de test
 /*
         System.out.println("*****   Test: " + i);
