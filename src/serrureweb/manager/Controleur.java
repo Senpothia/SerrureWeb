@@ -71,7 +71,6 @@ public class Controleur extends Observable implements Runnable {
                 if (!SerrureWeb.contexte.getPause()) {
 
                     System.out.println("******** DEBUT DE SEQUENCE *********");
-                   
 
                     //  methodeDetest(i);
                     k++;
@@ -144,7 +143,6 @@ public class Controleur extends Observable implements Runnable {
     public void notifierResultat() {   // notification au ModemWriter - Version standard
 
         SerrureWeb.contexte.setFin(!SerrureWeb.contexte.getActifs()[0] && !SerrureWeb.contexte.getActifs()[1] && !SerrureWeb.contexte.getActifs()[2]);
-        // A faire ajouter le traitement des cas d'erreurs
         SerrureWeb.contexte.setChanged(true);
     }
 
@@ -270,8 +268,7 @@ public class Controleur extends Observable implements Runnable {
 
                 if (!sensor && contact) {
 
-                    SerrureWeb.contexte.getTotaux()[i] = SerrureWeb.contexte.getTotaux()[i] + 1L;
-                    System.out.println("#######   TOTAL ECHANTILLON:" + i + " " + SerrureWeb.contexte.getTotaux()[i]);
+                    System.out.println("#######   CONTACTS ECHANTILLON " + i + "CONFORMES AVANT ACTIVATION");
 
                 } else {
 
