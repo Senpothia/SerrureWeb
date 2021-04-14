@@ -70,9 +70,14 @@ public class OrderProcessor {
             interrompus[2] = Boolean.parseBoolean(strings[31]);
             SerrureWeb.contexte.setInterrompus(interrompus);
 
+            String[] types = {"NA", "NA", "NA"};
+            types[0] = strings[33];
+            types[1] = strings[35];
+            types[2] = strings[37];
+            SerrureWeb.contexte.setTypes(types);
+            
             SerrureWeb.contexte.setMarche(true);
             SerrureWeb.contexte.setActif(true);
-            // SerrureWeb.contexte.setChanged(true);
 
         } else {
 

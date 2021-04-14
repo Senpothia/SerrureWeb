@@ -10,6 +10,7 @@ public class Contexte {
     private boolean[] pauses = {false, false, false};
     private boolean[] actifs = {false, false, false};
     private boolean[] interrompus = {false, false, false};
+    private String[] types ={"NA", "NA", "NA"};
     private String commande = null;
     private String rapport = null;
     private Boolean changed = false;
@@ -113,6 +114,15 @@ public class Contexte {
     public void setRapport(String rapport) {
         this.rapport = rapport;
     }
+
+    public String[] getTypes() {
+        return types;
+    }
+
+    public void setTypes(String[] types) {
+        this.types = types;
+    }
+    
     
     
 

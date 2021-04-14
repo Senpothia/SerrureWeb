@@ -265,16 +265,36 @@ public class Controleur extends Observable implements Runnable {
                 // lecture contact
                 System.out.println("Lecture contact: " + i);
                 boolean contact = contacts[i].isHigh();
+                System.out.println("%%%%%%% TYPE ECHANTILLON " + i + " " + SerrureWeb.contexte.getTypes()[i]);
 
-                if (!sensor && contact) {
+                if (SerrureWeb.contexte.getTypes()[i].equals("DX200I")) {
 
-                    System.out.println("#######   CONTACTS ECHANTILLON " + i + "CONFORMES AVANT ACTIVATION");
+                    if (!sensor && contact) {
 
-                } else {
+                        System.out.println("#######   CONTACTS ECHANTILLON " + i + "CONFORMES AVANT ACTIVATION");
 
-                    SerrureWeb.contexte.getActifs()[i] = true;
-                    SerrureWeb.contexte.getErreurs()[i] = true;
-                    System.out.println("///////   Test échoué echantillon:" + i);
+                    } else {
+
+                        SerrureWeb.contexte.getActifs()[i] = true;
+                        SerrureWeb.contexte.getErreurs()[i] = true;
+                        System.out.println("///////   Test échoué echantillon:" + i);
+                    }
+
+                }
+
+                if (SerrureWeb.contexte.getTypes()[i].equals("APX200")) {
+
+                    if (!sensor && !contact) {
+
+                        System.out.println("#######   CONTACTS ECHANTILLON " + i + "CONFORMES AVANT ACTIVATION");
+
+                    } else {
+
+                        SerrureWeb.contexte.getActifs()[i] = true;
+                        SerrureWeb.contexte.getErreurs()[i] = true;
+                        System.out.println("///////   Test échoué echantillon:" + i);
+                    }
+
                 }
 
                 relais[i].high();
@@ -294,20 +314,37 @@ public class Controleur extends Observable implements Runnable {
                 // lecture contact
                 System.out.println("Lecture contact: " + i);
                 contact = contacts[i].isHigh();
-                // incrémentation compteur - invalidation echantillon
 
-                // Boolean sensor = false;  // pour test
-                //Boolean contact = false; // pour test
-                if (!sensor && !contact) {
+                if (SerrureWeb.contexte.getTypes()[i].equals("DX200I")) {
 
-                    SerrureWeb.contexte.getTotaux()[i] = SerrureWeb.contexte.getTotaux()[i] + 1L;
-                    System.out.println("Total echantillon:" + i + " " + SerrureWeb.contexte.getTotaux()[i]);
+                    if (!sensor && !contact) {
 
-                } else {
+                        SerrureWeb.contexte.getTotaux()[i] = SerrureWeb.contexte.getTotaux()[i] + 1L;
+                        System.out.println("Total echantillon:" + i + " " + SerrureWeb.contexte.getTotaux()[i]);
 
-                    SerrureWeb.contexte.getActifs()[i] = true;
-                    SerrureWeb.contexte.getErreurs()[i] = true;
-                    System.out.println("///////   Test échoué echantillon:" + i);
+                    } else {
+
+                        SerrureWeb.contexte.getActifs()[i] = true;
+                        SerrureWeb.contexte.getErreurs()[i] = true;
+                        System.out.println("///////   Test échoué echantillon:" + i);
+                    }
+
+                }
+
+                if (SerrureWeb.contexte.getTypes()[i].equals("APX200")) {
+
+                    if (!sensor && contact) {
+
+                        SerrureWeb.contexte.getTotaux()[i] = SerrureWeb.contexte.getTotaux()[i] + 1L;
+                        System.out.println("Total echantillon:" + i + " " + SerrureWeb.contexte.getTotaux()[i]);
+
+                    } else {
+
+                        SerrureWeb.contexte.getActifs()[i] = true;
+                        SerrureWeb.contexte.getErreurs()[i] = true;
+                        System.out.println("///////   Test échoué echantillon:" + i);
+                    }
+
                 }
 
             } else {
