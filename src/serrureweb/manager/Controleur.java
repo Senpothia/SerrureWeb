@@ -341,7 +341,7 @@ public class Controleur extends Observable implements Runnable {
                 if (SerrureWeb.contexte.getTypes()[i].equals("APX200")) {
 
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(1000);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -395,6 +395,11 @@ public class Controleur extends Observable implements Runnable {
         }
 
         notifierResultat();
+         try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 
     }
 
