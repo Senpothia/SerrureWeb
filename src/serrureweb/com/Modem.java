@@ -40,8 +40,8 @@ public class Modem {
                     Thread recepteur = new Thread(new ModemReader(socket));
                     recepteur.start();
                     
-                    Thread Controleur = new Thread(new Controleur());
-                    Controleur.start();
+                   Thread Controleur = new Thread(new Controleur());
+                   Controleur.start();
                     
                 } catch (IOException ex) {
                     Logger.getLogger(Modem.class.getName()).log(Level.SEVERE, null, ex);

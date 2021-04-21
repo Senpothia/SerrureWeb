@@ -48,57 +48,64 @@ public class Controleur extends Observable implements Runnable {
     private GpioPinDigitalInput[] contacts = {contact1, contact2, contact3};
 
     public void start() {
-
-        System.out.println("***** démarrage séquence de test du contrôleur  *****");
+        
         boolean echValide = SerrureWeb.contexte.getActifs()[0] || SerrureWeb.contexte.getActifs()[1] || SerrureWeb.contexte.getActifs()[2];
-        //resultat.setErreurs(SerrureWeb.contexte.getErreurs());
+        while (true) {
 
-        while (!SerrureWeb.contexte.getActif()) {
+            System.out.println("***** démarrage séquence de test du contrôleur  *****");
+           // 
+            //resultat.setErreurs(SerrureWeb.contexte.getErreurs());
 
-            System.out.println("Actif? " + SerrureWeb.contexte.getActif());
-            System.out.println("En attente de démarrage");
-        }
+            while (!SerrureWeb.contexte.getActif()) {
 
-        while (SerrureWeb.contexte.getActif()) {
+                System.out.println("Actif? " + SerrureWeb.contexte.getActif());
+                System.out.println("En attente de démarrage");
+            }
 
-            echValide = SerrureWeb.contexte.getActifs()[0] || SerrureWeb.contexte.getActifs()[1] || SerrureWeb.contexte.getActifs()[2];
-            System.out.println("Actif? " + SerrureWeb.contexte.getActif());
-            System.out.println("Marche? " + SerrureWeb.contexte.getMarche());
-            System.out.println("echValide? " + echValide);
-            int k = 0;
-            while (SerrureWeb.contexte.getMarche() && echValide) {
+            while (SerrureWeb.contexte.getActif()) {
 
-                if (!SerrureWeb.contexte.getPause()) {
+                echValide = SerrureWeb.contexte.getActifs()[0] || SerrureWeb.contexte.getActifs()[1] || SerrureWeb.contexte.getActifs()[2];
+                System.out.println("Actif? " + SerrureWeb.contexte.getActif());
+                System.out.println("Marche? " + SerrureWeb.contexte.getMarche());
+                System.out.println("echValide? " + echValide);
+                int k = 0;
+                while (SerrureWeb.contexte.getMarche() && echValide) {
 
-                    System.out.println("******** DEBUT DE SEQUENCE *********");
+                    if (!SerrureWeb.contexte.getPause()) {
 
-                    //  methodeDetest(i);
-                    k++;
-                    sequence(k);
-                    System.out.println("******** FIN DE SEQUENCE *********");
+                        System.out.println("******** DEBUT DE SEQUENCE *********");
 
-                } else {
+                        //  methodeDetest(i);
+                        k++;
+                        sequence(k);
+                        System.out.println("******** FIN DE SEQUENCE *********");
 
-                    while (SerrureWeb.contexte.getPause()) {
+                    } else {
 
-                        System.err.println("!!!!!!!   Controleur en Pause   !!!!!!!");
+                        while (SerrureWeb.contexte.getPause()) {
 
+                            System.err.println("!!!!!!!   Controleur en Pause   !!!!!!!");
+
+                        }
+
+                    }
+
+                    echValide = SerrureWeb.contexte.getActifs()[0] || SerrureWeb.contexte.getActifs()[1] || SerrureWeb.contexte.getActifs()[2];
+
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
                 }
 
-                echValide = SerrureWeb.contexte.getActifs()[0] || SerrureWeb.contexte.getActifs()[1] || SerrureWeb.contexte.getActifs()[2];
-
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
             }
+            System.out.println("***** Fin de sequence  *****");
+            SerrureWeb.contexte.setActif(false);
 
         }
-        System.out.println("***** Fin de sequence  *****");
+
     }
 
     /*
@@ -297,11 +304,10 @@ public class Controleur extends Observable implements Runnable {
                 }
 
                 relais[i].high();
-              
+
                 if (SerrureWeb.contexte.getTypes()[i].equals("DX200I")) {
-                    
-                     // delai anti-rebond
-                     
+
+                    // delai anti-rebond
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException ex) {
@@ -345,8 +351,7 @@ public class Controleur extends Observable implements Runnable {
                     } catch (InterruptedException ex) {
                         Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    
-                    
+
                     sensor = sensors[i].isHigh();
                     System.out.println("Lecture sensor APX200 AP: " + i + " " + sensor);
 
@@ -358,7 +363,7 @@ public class Controleur extends Observable implements Runnable {
                         System.out.println("#######   CONTACTS ECHANTILLON APX200 " + i + " CONFORMES APRES ACTIVATION");
                         SerrureWeb.contexte.getTotaux()[i] = SerrureWeb.contexte.getTotaux()[i] + 1L;
                         System.out.println("Total echantillon:" + i + " " + SerrureWeb.contexte.getTotaux()[i]);
-                        
+
                     } else {
 
                         System.out.println("#######   CONTACTS ECHANTILLON APX200 " + i + " NON CONFORMES APRES ACTIVATION");
@@ -366,8 +371,8 @@ public class Controleur extends Observable implements Runnable {
                         SerrureWeb.contexte.getErreurs()[i] = true;
                         System.out.println("///////   Test échoué echantillon:" + i);
                     }
-                    
-                     relais[i].low();
+
+                    relais[i].low();
                 }
 
             } else {
@@ -395,11 +400,11 @@ public class Controleur extends Observable implements Runnable {
         }
 
         notifierResultat();
-         try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 
