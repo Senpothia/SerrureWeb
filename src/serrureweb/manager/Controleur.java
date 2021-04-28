@@ -56,13 +56,13 @@ public class Controleur extends Observable implements Runnable {
            // 
             //resultat.setErreurs(SerrureWeb.contexte.getErreurs());
 
-            while (!SerrureWeb.contexte.getActif()) {
+            while (!SerrureWeb.contexte.getActif() && !SerrureWeb.contexte.getErreur()) {
 
                 System.out.println("Actif? " + SerrureWeb.contexte.getActif());
                 System.out.println("En attente de démarrage");
             }
 
-            while (SerrureWeb.contexte.getActif()) {
+            while (SerrureWeb.contexte.getActif() && !SerrureWeb.contexte.getErreur()) {
 
                 echValide = SerrureWeb.contexte.getActifs()[0] || SerrureWeb.contexte.getActifs()[1] || SerrureWeb.contexte.getActifs()[2];
                 System.out.println("Actif? " + SerrureWeb.contexte.getActif());

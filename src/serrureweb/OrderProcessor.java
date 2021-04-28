@@ -12,16 +12,25 @@ public class OrderProcessor {
 
     public void analyser(String commande) {
 
-        if (commande.startsWith("@SERV:>") && commande.endsWith(">#")) {
+        if (commande != null) {
 
-            decodageSimple(commande);
+            if (commande.startsWith("@SERV:>") && commande.endsWith(">#")) {
 
-        } else {
+                decodageSimple(commande);
 
-            decodageGo(commande);
+            } else {
+
+                decodageGo(commande);
+            }
+        }else {
+        
+            SerrureWeb.contexte.setMarche(false);
+            SerrureWeb.contexte.setErreur(true);
+            System.out.println("Erreur de connexion. Séquence interrompue!");
+        
         }
 
-        //System.out.println(SerrureWeb.contexte.toString());
+     
     }
 
     private void decodageGo(String commande) {
@@ -76,10 +85,9 @@ public class OrderProcessor {
             types[1] = strings[35];
             types[2] = strings[37];
             SerrureWeb.contexte.setTypes(types);
-            
+
             SerrureWeb.contexte.setMarche(true);
             SerrureWeb.contexte.setActif(true);
-            
 
         } else {
 

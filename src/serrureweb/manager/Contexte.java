@@ -5,6 +5,7 @@ public class Contexte {
     private Boolean marche = false;   // Etat de la séquence en cours
     private Boolean pause = false;    // Etat de la séquence en cours
     private Boolean actif = false;    // Etat de la séquence en cours
+    private Boolean erreur = false;
     private long[] totaux = {0, 0, 0};
     private boolean[] erreurs = {false, false, false};
     private boolean[] pauses = {false, false, false};
@@ -121,6 +122,14 @@ public class Contexte {
 
     public void setTypes(String[] types) {
         this.types = types;
+    }
+
+    public Boolean getErreur() {
+        return erreur;
+    }
+
+    public void setErreur(Boolean erreur) {
+        this.erreur = erreur;
     }
     
     

@@ -56,6 +56,8 @@ public class ModemReader implements Runnable {
             }
 
         } catch (IOException ex) {
+            
+            System.out.println("Connexion interrompue!");
 
         }
 
