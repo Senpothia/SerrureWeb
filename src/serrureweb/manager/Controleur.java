@@ -25,6 +25,7 @@ public class Controleur extends Observable implements Runnable {
     final GpioPinDigitalOutput relais1 = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_25, "REL1", PinState.LOW);
     final GpioPinDigitalOutput relais2 = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_28, "REL2", PinState.LOW);
     final GpioPinDigitalOutput relais3 = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_29, "REL3", PinState.LOW);
+    final GpioPinDigitalOutput alarm = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_27, "LED1", PinState.LOW);
 
     final GpioPinDigitalInput sensor1 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_02, PinPullResistance.PULL_UP);
     final GpioPinDigitalInput sensor2 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_03, PinPullResistance.PULL_UP);
@@ -48,12 +49,21 @@ public class Controleur extends Observable implements Runnable {
     private GpioPinDigitalInput[] contacts = {contact1, contact2, contact3};
 
     public void start() {
-        
+
         boolean echValide = SerrureWeb.contexte.getActifs()[0] || SerrureWeb.contexte.getActifs()[1] || SerrureWeb.contexte.getActifs()[2];
         while (true) {
 
             System.out.println("***** démarrage séquence de test du contrôleur  *****");
-           // 
+
+            if (SerrureWeb.contexte.getErreur()) {
+
+                alarm.high();
+            } else {
+                
+                alarm.low();
+
+            };
+            // 
             //resultat.setErreurs(SerrureWeb.contexte.getErreurs());
 
             while (!SerrureWeb.contexte.getActif() && !SerrureWeb.contexte.getErreur()) {
