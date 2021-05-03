@@ -26,6 +26,7 @@ public class Controleur extends Observable implements Runnable {
     final GpioPinDigitalOutput relais2 = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_28, "REL2", PinState.LOW);
     final GpioPinDigitalOutput relais3 = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_29, "REL3", PinState.LOW);
     final GpioPinDigitalOutput alarm = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_27, "LED1", PinState.LOW);
+    final GpioPinDigitalOutput temoin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_26, "LED1", PinState.LOW);
 
     final GpioPinDigitalInput sensor1 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_02, PinPullResistance.PULL_UP);
     final GpioPinDigitalInput sensor2 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_03, PinPullResistance.PULL_UP);
@@ -51,6 +52,7 @@ public class Controleur extends Observable implements Runnable {
     public void start() {
 
         boolean echValide = SerrureWeb.contexte.getActifs()[0] || SerrureWeb.contexte.getActifs()[1] || SerrureWeb.contexte.getActifs()[2];
+        temoin.high();
         while (true) {
 
             System.out.println("***** démarrage séquence de test du contrôleur  *****");
@@ -59,7 +61,7 @@ public class Controleur extends Observable implements Runnable {
 
                 alarm.high();
             } else {
-                
+
                 alarm.low();
 
             };
