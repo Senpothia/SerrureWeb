@@ -58,10 +58,13 @@ public class Controleur extends Observable implements Runnable {
             System.out.println("***** démarrage séquence de test du contrôleur  *****");
 
             if (SerrureWeb.contexte.getErreur()) {
-
-                alarm.high();
+                
+                temoin.low();     // Erreur sur l'interface
+                alarm.high();     // erreur de connexion avec le serveur
+                
             } else {
-
+                
+                temoin.high();
                 alarm.low();
 
             };
@@ -108,6 +111,12 @@ public class Controleur extends Observable implements Runnable {
                         Thread.sleep(5000);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                    if (!echValide) {
+
+                        temoin.high();   // Statut de fonctionnement de l'interface OK
+                        alarm.high();    // Erreur sur tous les échantillons
                     }
 
                 }
