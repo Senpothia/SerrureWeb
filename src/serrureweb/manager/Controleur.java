@@ -51,26 +51,25 @@ public class Controleur extends Observable implements Runnable {
 
     public void start() {
 
-        boolean echValide = SerrureWeb.contexte.getActifs()[0] || SerrureWeb.contexte.getActifs()[1] || SerrureWeb.contexte.getActifs()[2];
+        boolean echValide = SerrureWeb.contexte.getActifs()[0] && !SerrureWeb.contexte.getErreurs()[0] || SerrureWeb.contexte.getActifs()[1] && !SerrureWeb.contexte.getErreurs()[1] || SerrureWeb.contexte.getActifs()[2] && !SerrureWeb.contexte.getErreurs()[2];
         temoin.high();
         while (true) {
 
             System.out.println("***** démarrage séquence de test du contrôleur  *****");
 
             if (SerrureWeb.contexte.getErreur()) {
-                
+
                 temoin.low();     // Erreur sur l'interface
                 alarm.high();     // erreur de connexion avec le serveur
-                
+
             } else {
-                
+
                 temoin.high();
                 alarm.low();
 
-            };
+            }
             // 
             //resultat.setErreurs(SerrureWeb.contexte.getErreurs());
-
             while (!SerrureWeb.contexte.getActif() && !SerrureWeb.contexte.getErreur()) {
 
                 System.out.println("Actif? " + SerrureWeb.contexte.getActif());
@@ -79,11 +78,32 @@ public class Controleur extends Observable implements Runnable {
 
             while (SerrureWeb.contexte.getActif() && !SerrureWeb.contexte.getErreur()) {
 
-                echValide = SerrureWeb.contexte.getActifs()[0] || SerrureWeb.contexte.getActifs()[1] || SerrureWeb.contexte.getActifs()[2];
+                echValide = SerrureWeb.contexte.getActifs()[0] && !SerrureWeb.contexte.getErreurs()[0] || SerrureWeb.contexte.getActifs()[1] && !SerrureWeb.contexte.getErreurs()[1] || SerrureWeb.contexte.getActifs()[2] && !SerrureWeb.contexte.getErreurs()[2];
                 System.out.println("Actif? " + SerrureWeb.contexte.getActif());
                 System.out.println("Marche? " + SerrureWeb.contexte.getMarche());
                 System.out.println("echValide? " + echValide);
                 int k = 0;
+
+                if (echValide) {
+
+                    if (SerrureWeb.contexte.getErreur()) {
+
+                        temoin.low();     // Erreur sur l'interface
+                        alarm.high();     // erreur de connexion avec le serveur
+
+                    } else {
+
+                        temoin.high();
+                        alarm.low();
+
+                    }
+
+                } else {
+
+                    temoin.high();   // Statut de fonctionnement de l'interface OK
+                    alarm.high();    // Erreur sur tous les échantillons
+                }
+
                 while (SerrureWeb.contexte.getMarche() && echValide) {
 
                     if (!SerrureWeb.contexte.getPause()) {
@@ -105,19 +125,13 @@ public class Controleur extends Observable implements Runnable {
 
                     }
 
-                    echValide = SerrureWeb.contexte.getActifs()[0] || SerrureWeb.contexte.getActifs()[1] || SerrureWeb.contexte.getActifs()[2];
-
                     try {
                         Thread.sleep(5000);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
-                    if (!echValide) {
-
-                        temoin.high();   // Statut de fonctionnement de l'interface OK
-                        alarm.high();    // Erreur sur tous les échantillons
-                    }
+                    echValide = SerrureWeb.contexte.getActifs()[0] && !SerrureWeb.contexte.getErreurs()[0] || SerrureWeb.contexte.getActifs()[1] && !SerrureWeb.contexte.getErreurs()[1] || SerrureWeb.contexte.getActifs()[2] && !SerrureWeb.contexte.getErreurs()[2];
 
                 }
 
@@ -302,7 +316,7 @@ public class Controleur extends Observable implements Runnable {
 
                     } else {
 
-                        SerrureWeb.contexte.getActifs()[i] = true;
+                        //SerrureWeb.contexte.getActifs()[i] = true;
                         SerrureWeb.contexte.getErreurs()[i] = true;
                         System.out.println("#######   CONTACTS ECHANTILLON DX200I " + i + " NON ONFORMES AVANT ACTIVATION");
                     }
@@ -317,7 +331,7 @@ public class Controleur extends Observable implements Runnable {
 
                     } else {
 
-                        SerrureWeb.contexte.getActifs()[i] = true;
+                        // SerrureWeb.contexte.getActifs()[i] = true;
                         SerrureWeb.contexte.getErreurs()[i] = true;
                         System.out.println("#######   CONTACTS ECHANTILLON APX200 " + i + " NON CONFORMES AVANT ACTIVATION");
                     }
@@ -358,7 +372,7 @@ public class Controleur extends Observable implements Runnable {
 
                     } else {
                         System.out.println("#######   CONTACTS ECHANTILLON DX200I " + i + " NON CONFORMES APRES ACTIVATION");
-                        SerrureWeb.contexte.getActifs()[i] = true;
+                        //SerrureWeb.contexte.getActifs()[i] = true;
                         SerrureWeb.contexte.getErreurs()[i] = true;
                         System.out.println("///////   Test échoué echantillon:" + i);
                     }
@@ -388,7 +402,7 @@ public class Controleur extends Observable implements Runnable {
                     } else {
 
                         System.out.println("#######   CONTACTS ECHANTILLON APX200 " + i + " NON CONFORMES APRES ACTIVATION");
-                        SerrureWeb.contexte.getActifs()[i] = true;
+                        //SerrureWeb.contexte.getActifs()[i] = true;
                         SerrureWeb.contexte.getErreurs()[i] = true;
                         System.out.println("///////   Test échoué echantillon:" + i);
                     }
