@@ -48,6 +48,8 @@ public class Controleur extends Observable implements Runnable {
     private GpioPinDigitalOutput[] relais = {relais1, relais2, relais3};
     private GpioPinDigitalInput[] sensors = {sensor1, sensor2, sensor3};
     private GpioPinDigitalInput[] contacts = {contact1, contact2, contact3};
+    
+    private int interTest = 24000;
 
     public void start() {
 
@@ -126,7 +128,7 @@ public class Controleur extends Observable implements Runnable {
                     }
 
                     try {
-                        Thread.sleep(5000);
+                        Thread.sleep(6000);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -310,30 +312,38 @@ public class Controleur extends Observable implements Runnable {
 
                 if (SerrureWeb.contexte.getTypes()[i].equals("DX200I")) {
 
-                    if (!sensor && contact) {
+                    if (SerrureWeb.contexte.getContacteurs()) {  // Validation test des contacteurs
 
-                        System.out.println("#######   CONTACTS ECHANTILLON DX200I " + i + " CONFORMES AVANT ACTIVATION");
+                        if (!sensor && contact) {
 
-                    } else {
+                            System.out.println("#######   CONTACTS ECHANTILLON DX200I " + i + " CONFORMES AVANT ACTIVATION");
 
-                        //SerrureWeb.contexte.getActifs()[i] = true;
-                        SerrureWeb.contexte.getErreurs()[i] = true;
-                        System.out.println("#######   CONTACTS ECHANTILLON DX200I " + i + " NON ONFORMES AVANT ACTIVATION");
+                        } else {
+
+                            //SerrureWeb.contexte.getActifs()[i] = true;
+                            SerrureWeb.contexte.getErreurs()[i] = true;
+                            System.out.println("#######   CONTACTS ECHANTILLON DX200I " + i + " NON ONFORMES AVANT ACTIVATION");
+                        }
+
                     }
 
                 }
 
                 if (SerrureWeb.contexte.getTypes()[i].equals("APX200")) {
 
-                    if (!sensor && !contact) {
+                    if (SerrureWeb.contexte.getContacteurs()) {
 
-                        System.out.println("#######   CONTACTS ECHANTILLON APX200 " + i + " CONFORMES AVANT ACTIVATION");
+                        if (!sensor && !contact) {
 
-                    } else {
+                            System.out.println("#######   CONTACTS ECHANTILLON APX200 " + i + " CONFORMES AVANT ACTIVATION");
 
-                        // SerrureWeb.contexte.getActifs()[i] = true;
-                        SerrureWeb.contexte.getErreurs()[i] = true;
-                        System.out.println("#######   CONTACTS ECHANTILLON APX200 " + i + " NON CONFORMES AVANT ACTIVATION");
+                        } else {
+
+                            // SerrureWeb.contexte.getActifs()[i] = true;
+                            SerrureWeb.contexte.getErreurs()[i] = true;
+                            System.out.println("#######   CONTACTS ECHANTILLON APX200 " + i + " NON CONFORMES AVANT ACTIVATION");
+                        }
+
                     }
 
                 }
@@ -364,17 +374,21 @@ public class Controleur extends Observable implements Runnable {
                     contact = contacts[i].isHigh();
                     System.out.println("Lecture contact DX200 AP: " + i + " " + contact);
 
-                    if (!sensor && !contact) {
+                    if (SerrureWeb.contexte.getContacteurs()) {  // Validation test des contacteurs
 
-                        System.out.println("#######   CONTACTS ECHANTILLON DX200I " + i + " CONFORMES APRES ACTIVATION");
-                        SerrureWeb.contexte.getTotaux()[i] = SerrureWeb.contexte.getTotaux()[i] + 1L;
-                        System.out.println("Total echantillon:" + i + " " + SerrureWeb.contexte.getTotaux()[i]);
+                        if (!sensor && !contact) {
 
-                    } else {
-                        System.out.println("#######   CONTACTS ECHANTILLON DX200I " + i + " NON CONFORMES APRES ACTIVATION");
-                        //SerrureWeb.contexte.getActifs()[i] = true;
-                        SerrureWeb.contexte.getErreurs()[i] = true;
-                        System.out.println("///////   Test échoué echantillon:" + i);
+                            System.out.println("#######   CONTACTS ECHANTILLON DX200I " + i + " CONFORMES APRES ACTIVATION");
+                            SerrureWeb.contexte.getTotaux()[i] = SerrureWeb.contexte.getTotaux()[i] + 1L;
+                            System.out.println("Total echantillon:" + i + " " + SerrureWeb.contexte.getTotaux()[i]);
+
+                        } else {
+                            System.out.println("#######   CONTACTS ECHANTILLON DX200I " + i + " NON CONFORMES APRES ACTIVATION");
+                            //SerrureWeb.contexte.getActifs()[i] = true;
+                            SerrureWeb.contexte.getErreurs()[i] = true;
+                            System.out.println("///////   Test échoué echantillon:" + i);
+                        }
+
                     }
 
                 }
@@ -393,18 +407,22 @@ public class Controleur extends Observable implements Runnable {
                     contact = contacts[i].isHigh();
                     System.out.println("Lecture contact APX200 AP: " + i + " " + contact);
 
-                    if (!sensor && contact) {
+                    if (SerrureWeb.contexte.getContacteurs()) {
 
-                        System.out.println("#######   CONTACTS ECHANTILLON APX200 " + i + " CONFORMES APRES ACTIVATION");
-                        SerrureWeb.contexte.getTotaux()[i] = SerrureWeb.contexte.getTotaux()[i] + 1L;
-                        System.out.println("Total echantillon:" + i + " " + SerrureWeb.contexte.getTotaux()[i]);
+                        if (!sensor && contact) {
 
-                    } else {
+                            System.out.println("#######   CONTACTS ECHANTILLON APX200 " + i + " CONFORMES APRES ACTIVATION");
+                            SerrureWeb.contexte.getTotaux()[i] = SerrureWeb.contexte.getTotaux()[i] + 1L;
+                            System.out.println("Total echantillon:" + i + " " + SerrureWeb.contexte.getTotaux()[i]);
 
-                        System.out.println("#######   CONTACTS ECHANTILLON APX200 " + i + " NON CONFORMES APRES ACTIVATION");
-                        //SerrureWeb.contexte.getActifs()[i] = true;
-                        SerrureWeb.contexte.getErreurs()[i] = true;
-                        System.out.println("///////   Test échoué echantillon:" + i);
+                        } else {
+
+                            System.out.println("#######   CONTACTS ECHANTILLON APX200 " + i + " NON CONFORMES APRES ACTIVATION");
+                            //SerrureWeb.contexte.getActifs()[i] = true;
+                            SerrureWeb.contexte.getErreurs()[i] = true;
+                            System.out.println("///////   Test échoué echantillon:" + i);
+                        }
+
                     }
 
                     relais[i].low();
@@ -436,7 +454,7 @@ public class Controleur extends Observable implements Runnable {
 
         notifierResultat();
         try {
-            Thread.sleep(5000);
+            Thread.sleep(interTest);    // Tempo entte deux tours de test
         } catch (InterruptedException ex) {
             Logger.getLogger(Sequence.class.getName()).log(Level.SEVERE, null, ex);
         }

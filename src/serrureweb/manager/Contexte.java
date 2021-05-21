@@ -16,6 +16,7 @@ public class Contexte {
     private String rapport = null;
     private Boolean changed = false;
     private Boolean fin = false;
+    private Boolean contacteurs = true;   // Validation test des contacteurs
 
     public Contexte() {
     }
@@ -130,6 +131,14 @@ public class Contexte {
 
     public void setErreur(Boolean erreur) {
         this.erreur = erreur;
+    }
+
+    public Boolean getContacteurs() {
+        return contacteurs;
+    }
+
+    public void setContacteurs(Boolean contacteurs) {
+        this.contacteurs = contacteurs;
     }
     
     
