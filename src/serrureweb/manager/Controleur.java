@@ -48,7 +48,7 @@ public class Controleur extends Observable implements Runnable {
     private GpioPinDigitalOutput[] relais = {relais1, relais2, relais3};
     private GpioPinDigitalInput[] sensors = {sensor1, sensor2, sensor3};
     private GpioPinDigitalInput[] contacts = {contact1, contact2, contact3};
-    
+
     private int interTest = 24000;
 
     public void start() {
@@ -312,7 +312,7 @@ public class Controleur extends Observable implements Runnable {
 
                 if (SerrureWeb.contexte.getTypes()[i].equals("DX200I")) {
 
-                    if (SerrureWeb.contexte.getContacteurs()) {  // Validation test des contacteurs
+                    if (SerrureWeb.contexte.getContacteurs()[i]) {  // Validation test des contacteurs
 
                         if (!sensor && contact) {
 
@@ -331,7 +331,7 @@ public class Controleur extends Observable implements Runnable {
 
                 if (SerrureWeb.contexte.getTypes()[i].equals("APX200")) {
 
-                    if (SerrureWeb.contexte.getContacteurs()) {
+                    if (SerrureWeb.contexte.getContacteurs()[i]) {
 
                         if (!sensor && !contact) {
 
@@ -374,7 +374,7 @@ public class Controleur extends Observable implements Runnable {
                     contact = contacts[i].isHigh();
                     System.out.println("Lecture contact DX200 AP: " + i + " " + contact);
 
-                    if (SerrureWeb.contexte.getContacteurs()) {  // Validation test des contacteurs
+                    if (SerrureWeb.contexte.getContacteurs()[i]) {  // Validation test des contacteurs
 
                         if (!sensor && !contact) {
 
@@ -388,6 +388,12 @@ public class Controleur extends Observable implements Runnable {
                             SerrureWeb.contexte.getErreurs()[i] = true;
                             System.out.println("///////   Test échoué echantillon:" + i);
                         }
+
+                    } else {
+
+                        System.out.println("#######   CONTACTS ECHANTILLON DX200I " + i + " NON PRIS EN COMPTE");
+                        SerrureWeb.contexte.getTotaux()[i] = SerrureWeb.contexte.getTotaux()[i] + 1L;
+                        System.out.println("Total echantillon:" + i + " " + SerrureWeb.contexte.getTotaux()[i]);
 
                     }
 
@@ -407,7 +413,7 @@ public class Controleur extends Observable implements Runnable {
                     contact = contacts[i].isHigh();
                     System.out.println("Lecture contact APX200 AP: " + i + " " + contact);
 
-                    if (SerrureWeb.contexte.getContacteurs()) {
+                    if (SerrureWeb.contexte.getContacteurs()[i]) {
 
                         if (!sensor && contact) {
 
@@ -422,6 +428,12 @@ public class Controleur extends Observable implements Runnable {
                             SerrureWeb.contexte.getErreurs()[i] = true;
                             System.out.println("///////   Test échoué echantillon:" + i);
                         }
+
+                    } else {
+
+                        System.out.println("#######   CONTACTS ECHANTILLON APX200 " + i + " NON PRIS EN COMPTE");
+                        SerrureWeb.contexte.getTotaux()[i] = SerrureWeb.contexte.getTotaux()[i] + 1L;
+                        System.out.println("Total echantillon:" + i + " " + SerrureWeb.contexte.getTotaux()[i]);
 
                     }
 
